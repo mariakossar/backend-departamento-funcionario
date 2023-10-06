@@ -25,8 +25,8 @@ public class SpringDataConfig {
 		
 		BoneCPDataSource ds = new BoneCPDataSource();		
 		ds.setUser("root");
-		ds.setPassword("?"); // colocar a senha que vc criou para acessar o banco, no lugar do '?'
-		ds.setJdbcUrl("jdbc:mariadb://localhost:3306/atividade02");
+		ds.setPassword("tesouraria2015"); 
+		ds.setJdbcUrl("jdbc:mariadb://localhost:3307/atividade02");
 		ds.setDriverClass("org.mariadb.jdbc.Driver");
 		return ds;
 	}

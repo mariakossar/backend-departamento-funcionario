@@ -23,69 +23,47 @@ public class BackendDepartamentoFuncionarioApplication {
 	@Bean
 	public CommandLineRunner demo(DepartamentoService departamentoService, FuncionarioService funcionarioService) {
 		return (arg) -> {
+			
+			Log.info("");
+			Log.info("");
+			Log.info("============= Listagem de todos os FUNCIONARIOS =============");
+			for (Funcionario funcionario : funcionarioService.listarTodosFuncionarios())
+				Log.info(funcionario.toString());
+			
+			Log.info("");
+			Log.info("");
+			Log.info("1 -  Uma procedure que aumenta o salário de todos os funcionários em X porcento, \"\n"
+					+ "					+ \"onde X é um número inteiro.");
+			funcionarioService.aumentarSalario(10);
+			
+			Log.info("");
+			Log.info("");
+			Log.info("============= Listagem de todos os FUNCIONARIOS após executar Procedure =============");
+			for (Funcionario funcionario : funcionarioService.listarTodosFuncionarios())
+				Log.info(funcionario.toString());
+			
+			Log.info("");
+			Log.info("");
+			Log.info("============= 2. Uma consulta que lista todos os funcionários de um determinado departamento "
+					+ "que não possuam dependentes utilizando parâmetros nomeados. =============");
+			for (Funcionario funcionario : funcionarioService.findByFuncionarioSemDependenteCodDepartamento(1L))
+				Log.info(funcionario.toString());
+			
+			Log.info("");
+			Log.info("");
+			Log.info("============= //3. Uma instrução de update que troca todos os funcionários de um determinado\n"
+					+ "	departamento para outro departamento utilizando a anotação @Modifying.");
+			int registrosAfetadosUpdate = funcionarioService.updateFuncionarioByDepartamentoCodDepartamento(1L, 2L);
+			Log.info("Registros afetados update: " + registrosAfetadosUpdate);
+			
 
-			Log.info("1 - Listar um funcionário pelo seu nome e quantidade de dependentes utilizando consulta\n"
-					+ "por palavras-chaves.");
-			Log.info("---------------------------------");
-			for (Funcionario funcionario : funcionarioService.findByNomeFuncionarioAndQtdDependente("João", 3))
-				Log.info(funcionario.toString());
 			Log.info("");
-
-			Log.info("2 - Listar todos os funcionários de um determinado departamento por JPQL via @Query");
-			Log.info("---------------------------------");
-			for(Funcionario funcionario : funcionarioService.findAllByNomeDepartamento("Finanças"))
-				Log.info(funcionario.toString());
 			Log.info("");
+			Log.info("============= 4. Uma instrução de delete que exclui todos os funcionários de um determinado\n"
+					+ "departamento utilizando a anotação @Modifying");
+			int registrosAfetadosDelete = funcionarioService.deleteFuncionarioByDepartamentoCodDepartamento(1L);
+			Log.info("Registros afetados delete: " + registrosAfetadosDelete);
 			
-			Log.info("3- Listar o primeiro departamento cadastrado");
-			Log.info("---------------------------------");
-			Log.info(departamentoService.findFirstBy().toString());
-			Log.info("");
-			
-			Log.info("4- Listar o primeiro funcionário que tem o maior salário");
-			Log.info("---------------------------------");
-			Log.info(funcionarioService.findTopByOrderBySalarioDesc().toString());
-			Log.info("");
-			
-			Log.info("5. Listar os 3 (três) primeiros funcionários que tem os maiores salários.");
-			Log.info("----------------------------------");
-			for (Funcionario funcionario : funcionarioService.findFirst3ByOrderBySalarioDesc())
-				Log.info(funcionario.toString());
-			Log.info("");
-			
-			Log.info("6 - Listar os funcionários que não tem dependentes em ordem crescente de nome por JPQL via @Query.");
-			Log.info("----------------------------------");
-			for(Funcionario funcionario : funcionarioService.findByFuncionarioSemQtdDependente())
-				Log.info(funcionario.toString());
-			Log.info("");
-			
-			Log.info("7 - Listar os funcionários que tem salário maior que um determinado valor por"
-					+ " JPQL sobrescrevendo palavras-chaves @Query.");
-			Log.info("----------------------------------");
-			for(Funcionario funcionario : funcionarioService.findByFuncionarioMaiorSalario(2000.0F))
-				Log.info(funcionario.toString());
-			Log.info("");
-			
-			Log.info("8 - Listar os funcionários que tem salário maior que um determinado valor por @Query com native query.");
-			Log.info("----------------------------------");
-			for(Funcionario funcionario : funcionarioService.findByFuncionarioMaiorSalarioNative(4000.0F))
-				Log.info(funcionario.toString());
-			Log.info("");
-			
-			Log.info("9 - Alterar a classe Funcionario e criar uma consulta para listar os funcionários com uma determinada "
-					+ "quantidade de dependentes por @NamedQuery.");
-			Log.info("----------------------------------");
-			for(Funcionario funcionario : funcionarioService.findByQtdDependente(2))
-				Log.info(funcionario.toString());
-			Log.info("");
-			
-			Log.info("10 - Alterar a classe Funcionario e criar uma consulta para listar os funcionários que contenham em qualquer "
-					+ "parte do seu nome um determinado nome por@NamedNativeQuery.");
-			Log.info("----------------------------------");
-			for(Funcionario funcionario : funcionarioService.findByNomeFuncionario("an"))
-				Log.info(funcionario.toString());
-			Log.info("");
-				
 	};
 		};
 		

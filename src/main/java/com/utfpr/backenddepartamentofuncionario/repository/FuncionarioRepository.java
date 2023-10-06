@@ -2,46 +2,41 @@ package com.utfpr.backenddepartamentofuncionario.repository;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
 import com.utfpr.backenddepartamentofuncionario.entity.Funcionario;
 
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
 	
-	// 1- Listar um funcionário pelo seu nome e quantidade de dependentes utilizando consulta por palavras-chaves.
-	List<Funcionario> findByNomeFuncionarioAndQtdDependente(String nomeFuncionario, Integer qtdDependente);
+	String SELECT = null;
+	// 1- . Uma procedure que aumenta o salário de todos os funcionários em X porcento, onde X é um número inteiro.
+	@Procedure ("proc_aumentar_salario")
+	void procAumentarSalario(Integer valorPorcentagem);
 	
-	//2- Listar todos os funcionários de um determinado departamento por JPQL via @Query
-	@Query("SELECT f FROM Funcionario f WHERE f.departamento.nomeDepartamento = :nomeDepartamento")
-    List<Funcionario> findAllByNomeDepartamento(@Param("nomeDepartamento") String nomeDepartamento);
+	//2. Uma consulta que lista todos os funcionários de um determinado departamento que não possuam dependentes utilizando parâmetros nomeados"
+	@Query("SELECT f FROM Funcionario f WHERE f.departamento.id = :codDepartamento AND f.qtdDependente = 0")
+	List<Funcionario> findByFuncionarioSemDependenteCodDepartamento(@Param("codDepartamento")Long codDepartamento);
 	
-	//4 - Listar o primeiro funcionário que tem o maior salário.
-	Funcionario findTopByOrderBySalarioDesc();
+	//3. Uma instrução de update que troca todos os funcionários de um determinado
+	//departamento para outro departamento utilizando a anotação @Modifying.
+	@Modifying
+	@Transactional
+	@Query("update Funcionario f set f.departamento.id = ?1 where f.departamento.id = ?2")
+	int updateFuncionarioByDepartamento(Long codDepartamentoNew, Long codDepartamentoOld);
 	
-	// 5 - Listar os 3 (três) primeiros funcionários que tem os maiores salários.
-	List <Funcionario> findFirst3ByOrderBySalarioDesc();
+	//4. Uma instrução de delete que exclui todos os funcionários de um determinado
+	//departamento utilizando a anotação @Modifying.
+	@Modifying
+	@Transactional 
+	@Query("delete from Funcionario f where f.departamento.id = ?1")
+	int deleteFuncionarioByDepartamentoCodDepartamento(Long codDepartamento);
 	
-	// 6 - Listar os funcionários que não tem dependentes em ordem crescente de nome por JPQL via @Query.
-	@Query("SELECT f FROM Funcionario f WHERE qtdDependente <= 0 ORDER BY f.nomeFuncionario ASC")
-	List<Funcionario> findByFuncionarioSemQtdDependente();
 	
-	// 7 - Listar os funcionários que tem salário maior que um determinado valor por JPQL sobrescrevendo palavras-chaves @Query.
-	@Query("SELECT f FROM Funcionario f WHERE f.salario > ?1")
-	List<Funcionario> findByFuncionarioMaiorSalario(Float salario);
-	
-	//8 - Listar os funcionários que tem salário maior que um determinado valor por @Query com native query.
-	@Query(value = "SELECT * FROM Funcionario WHERE salario > ?1", nativeQuery = true)
-	List<Funcionario> findByFuncionarioMaiorSalarioNative(Float salario);
-	
-	// 9 - Alterar a classe Funcionario e criar uma consulta para listar os funcionários com uma determinada quantidade de 
-	//dependentes por @NamedQuery.
-	@Query(name = "Funcionario.byQtdDependente ")
-	List<Funcionario> findByQtdDependente(Integer qtdDependente);
-	
-	// 10 - Alterar a classe Funcionario e criar uma consulta para listar os funcionários que contenham em qualquer
-	//parte do seu nome um determinado nome por@NamedNativeQuery.
-	@Query(name = "funcionario.byNomeFuncionario")
-	List<Funcionario> findByNomeFuncionario(String nomeFuncionario);
 }
+
