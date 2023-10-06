@@ -19,27 +19,9 @@ public class Departamento {
 	@Column(name = "cod_departamento", nullable = false)
 	private Long id;
 	
-	/*
-	@Column(nullable = false, unique = true, length = 50)
-	private String codigoDepartamento;*/
-	
-	@Column (name = "nome",nullable = false, length = 100)
+	@Column (name = "nome_departamento", nullable = false, length = 100)
 	private String nomeDepartamento;
 
-	public Departamento() {	
-	}
-	
-	public Departamento(String nome) {
-		this.nomeDepartamento = nome;
-	}
-	
-	public String getNome() {
-		return nomeDepartamento;
-	}
-	public void setNome(String nome) {
-		this.nomeDepartamento = nome;
-	}
-	
 	@Override
 	public String toString() {
 		return "Departamento [id=" + this.id + ", nome=" + this.nomeDepartamento + "]";
